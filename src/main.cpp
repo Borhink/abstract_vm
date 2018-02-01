@@ -6,17 +6,60 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:56:50 by qhonore           #+#    #+#             */
-/*   Updated: 2018/01/30 18:01:34 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/01 21:13:51 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "AbstractVM.class.hpp"
+// #include "AbstractVM.class.hpp"
 
+# include <sstream>
+# include <iostream>
 int main(void)
 {
-	AbstractVM vm;
+	// AbstractVM vm;
+    //
+	// vm.run();
+	try
+	{
+		int a = 0;
+		std::stringstream ss(std::string("-2147483649"));
 
-	vm.run();
+		ss >> a;
+		if (ss.fail())
+		{
+			if (a == std::numeric_limits<int>::max())
+				throw std::overflow_error("int overflow");
+			else if (a == std::numeric_limits<int>::min())
+				throw std::overflow_error("int underflow");
+		}
+		else
+			std::cout << a << std::endl;
+
+		// std::cout << stoi(std::string("999999999999")) << std::endl;
+		}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	try
+	{
+		double b;
+		std::stringstream ss(std::string("179769999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0"));
+
+		ss >> b;
+		if (ss.fail() || b > std::numeric_limits<double>::max())
+			throw std::overflow_error("double overflow");
+		else if (ss.fail() || b < std::numeric_limits<double>::min())
+			throw std::overflow_error("double underflow");
+		else
+			std::cout << b << std::endl;
+
+		// std::cout << stod(std::string("179768999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0")) << std::endl;
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 	return (0);
 }
 
@@ -32,18 +75,3 @@ int main(void)
 • The stack is composed of strictly less that two values when an arithmetic instruction
 is executed.
 */
-
-
-
-// try
-// {
-// 	std::cout << stoi(std::string("999")) << std::endl;
-// 	std::cout << atoi("999") << std::endl;
-//
-// 	std::cout << stoi(std::string("99999999")) << std::endl;
-// 	std::cout << stod(std::string("179768999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0")) << std::endl;
-// }
-// catch (std::exception &e)
-// {
-// 	std::cout << e.what() << std::endl;
-// }

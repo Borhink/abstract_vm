@@ -6,7 +6,7 @@
 #    By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/01/30 11:30:21 by qhonore           #+#    #+#              #
-#    Updated: 2018/01/30 16:02:26 by qhonore          ###   ########.fr        #
+#    Updated: 2018/02/01 20:41:55 by qhonore          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 INC_PATH = ./inc/
 
-SRC_NAME = main.cpp AbstractVM.class.cpp
+SRC_NAME = main.cpp #AbstractVM.class.cpp
 OBJ_NAME = $(SRC_NAME:.cpp=.o)
 NAME = avm
 
