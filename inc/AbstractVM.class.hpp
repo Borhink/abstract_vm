@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:23 by qhonore           #+#    #+#             */
-/*   Updated: 2018/01/30 16:46:18 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/03 20:17:42 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,14 @@
 # include <stdexcept>
 # include "Stack.class.hpp"
 # include "IOperand.class.hpp"
+# include "Operand.class.hpp"
 
 class AbstractVM
 {
 
 public:
 
-	typedef IOperand const *(AbstractVM::*funcPtr)(std::string const &);
+	typedef IOperand const *(AbstractVM::*funcPtr)(std::string const &) const;
 
 	AbstractVM(void);
 	AbstractVM(AbstractVM const &src);
@@ -44,7 +45,7 @@ public:
 private:
 
 	bool					_run;
-	Stack<IOperand*>		_operands;
+	Stack<IOperand*>		*_operands;
 	static funcPtr const	_create[5];
 };
 

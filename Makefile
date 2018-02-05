@@ -6,7 +6,7 @@
 #    By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/01/30 11:30:21 by qhonore           #+#    #+#              #
-#    Updated: 2018/02/01 20:41:55 by qhonore          ###   ########.fr        #
+#    Updated: 2018/02/05 17:46:07 by qhonore          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 INC_PATH = ./inc/
 
-SRC_NAME = main.cpp #AbstractVM.class.cpp
+SRC_NAME = main.cpp AbstractVM.class.cpp FPException.class.cpp
 OBJ_NAME = $(SRC_NAME:.cpp=.o)
 NAME = avm
 
@@ -23,7 +23,7 @@ OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
 INC = $(addprefix -I,$(INC_PATH))
 
 CC = g++
-CFLAGS = -MMD -Wall -Wextra -Werror -pedantic -Wuninitialized -std=c++11
+CFLAGS = -MMD -Wall -Wextra -Werror -pedantic -Wuninitialized -std=c++11 -I ~/.brew/include
 
 all:
 	@echo "\033[32;44m Make $(NAME) \033[0m"

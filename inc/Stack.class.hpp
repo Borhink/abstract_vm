@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 12:05:34 by qhonore           #+#    #+#             */
-/*   Updated: 2018/01/30 12:09:03 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/03 15:32:15 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define STACK_HPP
 
 # include <stack>
+# include <algorithm>
+# include <stdexcept>
 
 template <typename T>
 class Stack : public std::stack<T>
