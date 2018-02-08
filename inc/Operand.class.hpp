@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 12:05:34 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/05 19:32:42 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/08 22:41:38 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,13 +132,13 @@ public:
 		double opL = Operand::convert<double>(*this);
 		double opR = Operand::convert<double>(rhs);
 
-		if ((opL == -1 && opR == g_type[type].min)
-		|| (opR == -1 && opL == g_type[type].min)
+		if ((type < Float && opL == -1 && opR == g_type[type].min)
+		|| (type < Float && opR == -1 && opL == g_type[type].min)
 		|| (opL > 0 && opR > 0 && opL > g_type[type].max / opR)
-		|| (opL < 0 && opR < 0 && -opL > g_type[type].max / -opR))
+		|| (opL < 0 && opR < 0 && -opL > -g_type[type].min / -opR))
 			throw std::overflow_error("overflow");
-		if ((opL > 0 && opR < 0 && opL > g_type[type].max / -opR)
-		|| (opL < 0 && opR > 0 && -opL > g_type[type].max / opR))
+		if ((opL > 0 && opR < 0 && opL > -g_type[type].min / -opR)
+		|| (opL < 0 && opR > 0 && -opL > -g_type[type].min / opR))
 			throw std::underflow_error("underflow");
 		return (this->createOperand(type, opL * opR));
 	}
@@ -151,7 +151,7 @@ public:
 
 		if (opR == 0)
 			throw FloatingPointException();
-		if (opL == g_type[type].min && opR == -1)
+		if (type < Float && opL == g_type[type].min && opR == -1)
 			throw std::overflow_error("overflow");
 		return (this->createOperand(type, opL / opR));
 	}

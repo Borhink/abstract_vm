@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:28 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/05 19:32:39 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/08 21:13:14 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,13 @@ void AbstractVM::run(void)
 	// 	}
 	// }"1.79769e+1"
 	// "-2147483649"
-	this->createOperand(Double, "-179769313486231570814527423170436798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.00000000000000000");
-	this->createOperand(Int32, "-178.01234567890123456789");
-	IOperand *op1 = _operands->at(0);
-	IOperand *op2 = _operands->at(1);
-	std::cout << op1->toString() << " * " << op2->toString() << " = ";
-	IOperand const *res = *op1 * *op2;
-	std::cout << res->toString() << std::endl;
+	// this->createOperand(Int32, "-2147483648");
+	// this->createOperand(Int32, "1");
+	// IOperand *op1 = _operands->at(0);
+	// IOperand *op2 = _operands->at(1);
+	// std::cout << op1->toString() << " * " << op2->toString() << " = ";
+	// IOperand const *res = *op1 * *op2;
+	// std::cout << res->toString() << std::endl;
 }
 
 IOperand const *AbstractVM::createOperand(eOperandType type, std::string const &value) const

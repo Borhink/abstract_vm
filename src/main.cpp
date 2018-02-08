@@ -6,11 +6,12 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:56:50 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/05 17:52:44 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/08 21:12:13 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AbstractVM.class.hpp"
+#include "avm.hpp"
 
 # include <sstream>
 # include <iostream>
@@ -26,14 +27,15 @@ int main(void)
 		<< "float  : " << g_type[3].min << " | " << g_type[3].max << std::endl\
 		<< "double : " << g_type[4].min << " | " << g_type[4].max << std::endl;
 
-	try
-	{
-		vm.run();
-	}
-	catch (std::exception &e)
-	{
-		std::cout << e.what() << std::endl;
-	}
+	test_all();
+	// try
+	// {
+	// 	vm.run();
+	// }
+	// catch (std::exception &e)
+	// {
+	// 	std::cout << e.what() << std::endl;
+	// }
 
 	// try
 	// {
