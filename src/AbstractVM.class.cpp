@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:28 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/08 21:13:14 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/09 22:12:41 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,27 +39,29 @@ AbstractVM &AbstractVM::operator=(AbstractVM const &rhs)
 	return (*this);
 }
 
-void AbstractVM::run(void)
+void AbstractVM::run(char *path)
 {
 	std::string buff;
+	std::fstream file;
 
-	// while (_run)
-	// {
-	// 	std::getline(std::cin, buff);
-	// 	if (buff == "exit")
-	// 	{
-	// 		std::cout << "Absract VM shutdswn..." << std::endl;
-	// 		_run = false;
-	// 	}
-	// }"1.79769e+1"
-	// "-2147483649"
-	// this->createOperand(Int32, "-2147483648");
-	// this->createOperand(Int32, "1");
-	// IOperand *op1 = _operands->at(0);
-	// IOperand *op2 = _operands->at(1);
-	// std::cout << op1->toString() << " * " << op2->toString() << " = ";
-	// IOperand const *res = *op1 * *op2;
-	// std::cout << res->toString() << std::endl;
+	if (path)
+	{
+		file.open(path);
+		if (!file.is_open())
+		{
+			std::cout << "Opening failed" << std::endl;
+			return;
+		}
+	}
+	while (_run)
+	{
+		std::getline((file.is_open() ? file : std::cin), buff);
+		if (buff == "exit")
+		{
+			std::cout << "Absract VM shutdown..." << std::endl;
+			_run = false;
+		}
+	}
 }
 
 IOperand const *AbstractVM::createOperand(eOperandType type, std::string const &value) const

@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 12:05:34 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/08 22:41:38 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/09 16:14:33 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ public:
 		int opL = Operand::convert<int>(*this);
 		int opR = Operand::convert<int>(rhs);
 
-		if (opL == 0)
+		if (opR == 0)
 			throw FloatingPointException();
 		return (this->createOperand(type, opL % opR));
 	}

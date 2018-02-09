@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:23 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/08 21:13:28 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/09 22:10:34 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define ABSTRACTVM_HPP
 
 # include <iostream>
+# include <fstream>
 # include <string>
 # include <stdexcept>
 # include "Stack.class.hpp"
@@ -33,7 +34,7 @@ public:
 
 	AbstractVM &operator=(AbstractVM const &rhs);
 
-	void run(void);
+	void run(char *path);
 	IOperand const *createOperand(eOperandType type, std::string const &value) const;
 
 	IOperand const *createInt8(std::string const &value) const;

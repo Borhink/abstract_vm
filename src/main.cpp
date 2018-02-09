@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:56:50 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/08 21:12:13 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/09 22:10:00 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,72 +15,22 @@
 
 # include <sstream>
 # include <iostream>
-int main(void)
+int main(int ac, char **av)
 {
 	AbstractVM vm;
 
-	std::cout.precision(std::numeric_limits<double>::max_digits10);
-	std::cout << std::fixed << "TYPES MIN MAX" << std::endl\
-		<< "int8   : " << g_type[0].min << " | " << g_type[0].max << std::endl\
-		<< "int16  : " << g_type[1].min << " | " << g_type[1].max << std::endl\
-		<< "int32  : " << g_type[2].min << " | " << g_type[2].max << std::endl\
-		<< "float  : " << g_type[3].min << " | " << g_type[3].max << std::endl\
-		<< "double : " << g_type[4].min << " | " << g_type[4].max << std::endl;
-
-	test_all();
-	// try
-	// {
-	// 	vm.run();
-	// }
-	// catch (std::exception &e)
-	// {
-	// 	std::cout << e.what() << std::endl;
-	// }
-
-	// try
-	// {
-	// 	int a = 0;
-	// 	std::stringstream ss(std::string("-2147483649"));
-    //
-	// 	ss >> a;
-	// 	if (ss.fail())
-	// 	{
-	// 		if (a == std::numeric_limits<int>::max())
-	// 			throw std::overflow_error("int overflow");
-	// 		else if (a == std::numeric_limits<int>::min())
-	// 			throw std::overflow_error("int underflow");
-	// 	}
-	// 	else
-	// 		std::cout << a << std::endl;
-    //
-	// 	// std::cout << stoi(std::string("999999999999")) << std::endl;
-	// }
-	// catch (std::exception &e)
-	// {
-	// 	std::cout << e.what() << std::endl;
-	// }
-    //
-	// try
-	// {
-	// 	double b;
-	// 	std::stringstream ss(std::string("1.79769e+1"));
-	// 	// std::stringstream ss(std::string("179768999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0"));
-    //
-	// 	ss >> b;
-	// 	if (ss.fail() || b == std::numeric_limits<double>::infinity())
-	// 		throw std::overflow_error("double overflow");
-	// 	else if (ss.fail() || b == -(std::numeric_limits<double>::infinity()))
-	// 		throw std::overflow_error("double underflow");
-	// 	else
-	// 		std::cout << b << std::endl;
-    //
-	// 	// std::cout << stod(std::string("179768999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0")) << std::endl;
-	// }
-	// catch (std::exception &e)
-	// {
-	// 	std::cout << e.what() << std::endl;
-	// }
-
+	if (ac >= 2)
+	{
+		for (int i = 1; i < ac; i++)
+		{
+			if (std::string(av[i]) == "-t")
+				test_all();
+			else
+				vm.run(av[i]);
+		}
+	}
+	else
+		vm.run(nullptr);
 	return (0);
 }
 
