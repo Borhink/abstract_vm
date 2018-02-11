@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 12:05:34 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/09 16:14:33 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/11 15:37:00 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <sstream>
 # include <limits>
 # include "IOperand.class.hpp"
-# include "FPException.class.hpp"
+# include "Exceptions.class.hpp"
 
 typedef struct
 {

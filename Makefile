@@ -6,7 +6,7 @@
 #    By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/01/30 11:30:21 by qhonore           #+#    #+#              #
-#    Updated: 2018/02/09 19:28:42 by qhonore          ###   ########.fr        #
+#    Updated: 2018/02/11 15:36:19 by qhonore          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 INC_PATH = ./inc/
 
-SRC_NAME = main.cpp AbstractVM.class.cpp FPException.class.cpp\
+SRC_NAME = main.cpp AbstractVM.class.cpp Exceptions.class.cpp\
 test.cpp test_mult.cpp test_div.cpp test_mod.cpp test_add.cpp test_sub.cpp
 OBJ_NAME = $(SRC_NAME:.cpp=.o)
 NAME = avm
