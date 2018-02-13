@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:28 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/13 18:04:14 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/13 18:36:50 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,18 +106,14 @@ void AbstractVM::run(char *path)
 	while (_run)
 	{
 		std::getline((_isFile ? file : std::cin), buff);
+		if (_isFile && file.eof())
+			_run = false;
 		try
 		{
-			if (_isFile && file.eof())
-			{
-				_run = false;
-				if (!_exit)
-					throw std::logic_error("No exit instruction exception");
-			}
-			if (!buff.empty() && _exit)
-				throw std::logic_error("VM already exit exception");
 			if (!buff.empty())
 				this->parseInstruction(buff);
+			if (!_run && !_exit)
+				throw std::logic_error("No exit instruction exception");
 		}
 		catch (std::exception &e)
 		{
@@ -160,6 +156,8 @@ void AbstractVM::parseInstruction(std::string line)
 			return;
 		line = line.substr(0, pos);
 		this->purifyString(line);
+		if (!line.empty() && _exit)
+			throw std::logic_error("VM already exit exception");
 		instruction = line.substr(0, line.find(" "));
 		if (AbstractVM::_inst.find(instruction) != _inst.end())
 			(this->*_inst.at(instruction))(line);
