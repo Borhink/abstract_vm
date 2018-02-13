@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:28 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/11 19:32:48 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/13 18:04:14 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ std::map<std::string, AbstractVM::funcPtr2> const AbstractVM::_inst = AbstractVM
 std::map<std::string, AbstractVM::funcPtr2> const AbstractVM::_types = AbstractVM::initTypes();
 
 AbstractVM::AbstractVM(void):
-_run(true), _exit(false), _operands(new Stack<IOperand*>)
+_operands(new Stack<IOperand const*>)
 {
 
 }
@@ -29,29 +29,34 @@ AbstractVM::AbstractVM(AbstractVM const &src)
 
 AbstractVM::~AbstractVM(void)
 {
+	this->clearStack();
+	delete _operands;
+}
+
+void AbstractVM::clearStack(void)
+{
 	while (!_operands->empty())
 	{
 		delete _operands->top();
 		_operands->pop();
 	}
-	delete _operands;
 }
 
 std::map<std::string, AbstractVM::funcPtr2> AbstractVM::initInst(void)
 {
 	std::map<std::string, AbstractVM::funcPtr2> map;
 
-	map["push"] = &AbstractVM::parsePush;
-	map["pop"] = &AbstractVM::parsePop;
-	map["dump"] = &AbstractVM::parseDump;
-	map["assert"] = &AbstractVM::parseAssert;
-	map["add"] = &AbstractVM::parseAdd;
-	map["sub"] = &AbstractVM::parseSub;
-	map["mul"] = &AbstractVM::parseMul;
-	map["div"] = &AbstractVM::parseDiv;
-	map["mod"] = &AbstractVM::parseMod;
-	map["print"] = &AbstractVM::parsePrint;
-	map["exit"] = &AbstractVM::parseExit;
+	map["push"] = &AbstractVM::Push;
+	map["pop"] = &AbstractVM::Pop;
+	map["dump"] = &AbstractVM::Dump;
+	map["assert"] = &AbstractVM::Assert;
+	map["add"] = &AbstractVM::Add;
+	map["sub"] = &AbstractVM::Sub;
+	map["mul"] = &AbstractVM::Mul;
+	map["div"] = &AbstractVM::Div;
+	map["mod"] = &AbstractVM::Mod;
+	map["print"] = &AbstractVM::Print;
+	map["exit"] = &AbstractVM::Exit;
 	return (map);
 }
 
@@ -96,22 +101,35 @@ void AbstractVM::run(char *path)
 	}
 	else
 		_isFile = false;
+	_run = true;
+	_exit = false;
 	while (_run)
 	{
 		std::getline((_isFile ? file : std::cin), buff);
 		try
 		{
+			if (_isFile && file.eof())
+			{
+				_run = false;
+				if (!_exit)
+					throw std::logic_error("No exit instruction exception");
+			}
+			if (!buff.empty() && _exit)
+				throw std::logic_error("VM already exit exception");
 			if (!buff.empty())
 				this->parseInstruction(buff);
 		}
 		catch (std::exception &e)
 		{
-			std::cout << "Line " << line << " \"" << YELLOW << buff << EOC << "\": " << RED << e.what() << EOC << std::endl;
+			if (!buff.empty())
+				std::cout << "Line " << line << " \"" << YELLOW << buff << EOC << "\": ";
+			std::cout << RED << e.what() << EOC << std::endl;
 		}
 		line++;
 	}
 	if (_isFile)
 		file.close();
+	this->clearStack();
 }
 
 void AbstractVM::purifyString(std::string &str) const
@@ -150,71 +168,148 @@ void AbstractVM::parseInstruction(std::string line)
 	}
 }
 
-void AbstractVM::parsePush(std::string const &line)
+void AbstractVM::checkLine(std::string const &line)
+{
+	if (line.find(" ") != std::string::npos)
+		throw LexicalSyntacticException("Syntactic exception (Too much arguments)");
+}
+
+void AbstractVM::Push(std::string const &line)
 {
 	this->parseArg(line);
-
-	(void)line;
 }
 
-void AbstractVM::parsePop(std::string const &line)
+void AbstractVM::Pop(std::string const &line)
 {
-	std::cout << "parsePop" << std::endl;
-	(void)line;
+	this->checkLine(line);
+	if (_operands->empty())
+		throw PopEmptyException();
+	delete _operands->top();
+	_operands->pop();
 }
 
-void AbstractVM::parseDump(std::string const &line)
+void AbstractVM::Dump(std::string const &line)
 {
-	std::cout << "parseDump" << std::endl;
-	(void)line;
+	this->checkLine(line);
+	for (Stack<IOperand const*>::reverse_iterator it = _operands->rbegin(); it != _operands->rend(); ++it)
+		std::cout << (*it)->toString() << std::endl;
 }
 
-void AbstractVM::parseAssert(std::string const &line)
+void AbstractVM::Assert(std::string const &line)
 {
-	std::cout << "parseAssert" << std::endl;
-	(void)line;
+	bool good = true;
+	this->parseArg(line);
+	if (((*_operands->crbegin())->toString() != (*(_operands->crbegin() + 1))->toString())
+		|| ((*_operands->crbegin())->getType() != (*(_operands->crbegin() + 1))->getType()))
+		good = false;
+	delete _operands->top();
+	_operands->pop();
+	if (!good)
+		throw std::runtime_error("Assert not true exception");
 }
 
-void AbstractVM::parseAdd(std::string const &line)
+void AbstractVM::Add(std::string const &line)
 {
-	std::cout << "parseAdd" << std::endl;
-	(void)line;
+	IOperand const *left, *right, *result;
+
+	this->checkLine(line);
+	if (_operands->size() < 2)
+		throw std::logic_error("Missing operand(s) exception");
+	right = _operands->top();
+	_operands->pop();
+	left = _operands->top();
+	_operands->pop();
+	result = *left + *right;
+	_operands->push(result);
+	delete left;
+	delete right;
 }
 
-void AbstractVM::parseSub(std::string const &line)
+void AbstractVM::Sub(std::string const &line)
 {
-	std::cout << "parseSub" << std::endl;
-	(void)line;
+	IOperand const *left, *right, *result;
+
+	this->checkLine(line);
+	if (_operands->size() < 2)
+		throw std::logic_error("Missing operand(s) exception");
+	right = _operands->top();
+	_operands->pop();
+	left = _operands->top();
+	_operands->pop();
+	result = *left - *right;
+	_operands->push(result);
+	delete left;
+	delete right;
 }
 
-void AbstractVM::parseMul(std::string const &line)
+void AbstractVM::Mul(std::string const &line)
 {
-	std::cout << "parseMul" << std::endl;
-	(void)line;
+	IOperand const *left, *right, *result;
+
+	this->checkLine(line);
+	if (_operands->size() < 2)
+		throw std::logic_error("Missing operand(s) exception");
+	right = _operands->top();
+	_operands->pop();
+	left = _operands->top();
+	_operands->pop();
+	result = *left * *right;
+	_operands->push(result);
+	delete left;
+	delete right;
 }
 
-void AbstractVM::parseDiv(std::string const &line)
+void AbstractVM::Div(std::string const &line)
 {
-	std::cout << "parseDiv" << std::endl;
-	(void)line;
+	IOperand const *left, *right, *result;
+
+	this->checkLine(line);
+	if (_operands->size() < 2)
+		throw std::logic_error("Missing operand(s) exception");
+	right = _operands->top();
+	_operands->pop();
+	left = _operands->top();
+	_operands->pop();
+	result = *left / *right;
+	_operands->push(result);
+	delete left;
+	delete right;
 }
 
-void AbstractVM::parseMod(std::string const &line)
+void AbstractVM::Mod(std::string const &line)
 {
-	std::cout << "parseMod" << std::endl;
-	(void)line;
+	IOperand const *left, *right, *result;
+
+	this->checkLine(line);
+	if (_operands->size() < 2)
+		throw std::logic_error("Missing operand(s) exception");
+	if ((*_operands->crbegin())->getType() >= Float
+	|| (*(_operands->crbegin() + 1))->getType() >= Float)
+		throw std::runtime_error("Invalid operands to binary expression exception");
+	right = _operands->top();
+	_operands->pop();
+	left = _operands->top();
+	_operands->pop();
+	result = *left % *right;
+	_operands->push(result);
+	delete left;
+	delete right;
 }
 
-void AbstractVM::parsePrint(std::string const &line)
+void AbstractVM::Print(std::string const &line)
 {
-	std::cout << "parsePrint" << std::endl;
-	(void)line;
+	Stack<IOperand const*>::const_reverse_iterator it = _operands->crbegin();
+	this->checkLine(line);
+	if ((*it)->getType() != Int8)
+		throw std::runtime_error("Assert not true exception");
+	std::cout << static_cast<char>(std::stoi((*it)->toString()));
+
 }
 
-void AbstractVM::parseExit(std::string const &line)
+void AbstractVM::Exit(std::string const &line)
 {
-	std::cout << "parseExit" << std::endl;
-	(void)line;
+	this->checkLine(line);
+	_exit = true;
 }
 
 void AbstractVM::parseArg(std::string const &line)
@@ -247,7 +342,10 @@ void AbstractVM::parseArg(std::string const &line)
 
 void AbstractVM::checkInteger(std::string const &value)
 {
-	for (size_t i = 0; i < value.size(); i++)
+	size_t i = 0;
+	if (value[0] == '-' || value[0] == '+')
+		i = 1;
+	for (; i < value.size(); i++)
 		if (!isdigit(value[i]))
 			throw LexicalSyntacticException("Syntactic exception (Value is not an integer)");
 }
@@ -255,13 +353,13 @@ void AbstractVM::checkInteger(std::string const &value)
 void AbstractVM::checkDecimal(std::string const &value)
 {
 	bool dot = false;
-	double test = 2.;
-	double test2 = .2;
-	test = test2;
+	size_t i = 0;
 
-	if (value == ".")
+	if (value[0] == '-' || value[0] == '+')
+		i = 1;
+	if (value == "." || value == "-." || value == "+.")
 		throw LexicalSyntacticException("Syntactic exception (Value is not a decimal number)");
-	for (size_t i = 0; i < value.size(); i++)
+	for (; i < value.size(); i++)
 		if (!isdigit(value[i]))
 		{
 			if (value[i] != '.' || dot)

@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/03 15:05:02 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/11 16:56:39 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/13 12:20:52 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,13 @@ LexicalSyntacticException::LexicalSyntacticException(char const *what) : std::ru
 char const *LexicalSyntacticException::what() const throw()
 {
 	return (std::runtime_error::what());
+}
+
+PopEmptyException::PopEmptyException(void) : std::logic_error("Pop empty exception")
+{
+}
+
+char const *PopEmptyException::what() const throw()
+{
+	return (std::logic_error::what());
 }

@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:23 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/11 19:24:49 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/13 17:48:20 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ public:
 
 	AbstractVM &operator=(AbstractVM const &rhs);
 
+	void clearStack(void);
 	void run(char *path);
 
 	IOperand const *createOperand(eOperandType type, std::string const &value) const;
@@ -64,17 +65,18 @@ private:
 	void purifyString(std::string &str) const;
 
 	void parseInstruction(std::string line);
-	void parsePush(std::string const &line);
-	void parsePop(std::string const &line);
-	void parseDump(std::string const &line);
-	void parseAssert(std::string const &line);
-	void parseAdd(std::string const &line);
-	void parseSub(std::string const &line);
-	void parseMul(std::string const &line);
-	void parseDiv(std::string const &line);
-	void parseMod(std::string const &line);
-	void parsePrint(std::string const &line);
-	void parseExit(std::string const &line);
+	void checkLine(std::string const &line);
+	void Push(std::string const &line);
+	void Pop(std::string const &line);
+	void Dump(std::string const &line);
+	void Assert(std::string const &line);
+	void Add(std::string const &line);
+	void Sub(std::string const &line);
+	void Mul(std::string const &line);
+	void Div(std::string const &line);
+	void Mod(std::string const &line);
+	void Print(std::string const &line);
+	void Exit(std::string const &line);
 
 	void parseArg(std::string const &line);
 	void checkInteger(std::string const &value);
@@ -88,7 +90,7 @@ private:
 	bool _run;
 	bool _exit;
 	bool _isFile;
-	Stack<IOperand*> *_operands;
+	Stack<IOperand const*> *_operands;
 
 	static funcPtr1 const _create[5];
 	static std::map<std::string, AbstractVM::funcPtr2> const _inst;
