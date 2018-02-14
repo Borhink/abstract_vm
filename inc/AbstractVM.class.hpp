@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:23 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/14 14:16:07 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/14 18:53:58 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,13 @@ public:
 
 	AbstractVM &operator=(AbstractVM const &rhs);
 
-	void run(char *path);
+	void run(char *path, bool verbose);
 
 private:
 
 	void clearStack(void);
 	void purifyString(std::string &str) const;
+	std::string printInstruction(std::string const &line, bool args);
 
 	void parseInstruction(std::string line);
 	void checkLine(std::string const &line);
@@ -71,6 +72,7 @@ private:
 	void Mod(std::string const &line);
 	void Print(std::string const &line);
 	void Exit(std::string const &line);
+	void Rev(std::string const &line);
 
 	void parseArg(std::string const &line);
 	void checkInteger(std::string const &value);
@@ -84,6 +86,7 @@ private:
 	bool _run;
 	bool _exit;
 	bool _isFile;
+	bool _verbose;
 	Stack<IOperand const*> *_operands;
 	Factory _factory;
 

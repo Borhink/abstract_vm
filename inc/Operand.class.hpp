@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 12:05:34 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/11 15:37:00 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/14 17:11:05 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,25 @@ class Operand : public IOperand
 {
 
 public:
+
+	static std::string toStringType(IOperand const *op)
+	{
+		switch (op->getType())
+		{
+			case Int8:
+				return (std::string("int8"));
+			case Int16:
+				return (std::string("int16"));
+			case Int32:
+				return (std::string("int32"));
+			case Float:
+				return (std::string("float"));
+			case Double:
+				return (std::string("double"));
+			default:
+				return (std::string(""));
+		}
+	}
 
 /******************************************************************************\
 |*********************** CONSTRUCTOR / DESTRUCTOR *****************************|

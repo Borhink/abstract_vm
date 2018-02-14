@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:28 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/14 14:16:55 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/14 19:07:17 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ std::map<std::string, AbstractVM::funcPtr2> AbstractVM::initInst(void)
 	map["mod"] = &AbstractVM::Mod;
 	map["print"] = &AbstractVM::Print;
 	map["exit"] = &AbstractVM::Exit;
+	map["rev"] = &AbstractVM::Rev;
 	return (map);
 }
 
@@ -82,7 +83,7 @@ AbstractVM &AbstractVM::operator=(AbstractVM const &rhs)
 	return (*this);
 }
 
-void AbstractVM::run(char *path)
+void AbstractVM::run(char *path, bool verbose)
 {
 	std::string buff;
 	std::fstream file;
@@ -93,7 +94,7 @@ void AbstractVM::run(char *path)
 		file.open(path);
 		if (!file.is_open())
 		{
-			std::cout << "Opening \"" << path << "\" failed" << std::endl;
+			std::cout << RED << "Opening \"" << path << "\" failed" << EOC << std::endl;
 			return;
 		}
 		_isFile = true;
@@ -102,6 +103,8 @@ void AbstractVM::run(char *path)
 		_isFile = false;
 	_run = true;
 	_exit = false;
+	_verbose = verbose;
+	std::cout << "Abstract VM " << GREEN << "starting" << EOC << "..." << std::endl;
 	while (_run)
 	{
 		std::getline((_isFile ? file : std::cin), buff);
@@ -122,6 +125,7 @@ void AbstractVM::run(char *path)
 		}
 		line++;
 	}
+	std::cout << "Abstract VM " << RED << "shutdown" << EOC << "..." << std::endl;
 	if (_isFile)
 		file.close();
 	this->clearStack();
@@ -165,6 +169,29 @@ void AbstractVM::parseInstruction(std::string line)
 	}
 }
 
+std::string AbstractVM::printInstruction(std::string const &line, bool args)
+{
+	std::stringstream ss;
+
+	if (args)
+	{
+		std::string arg = line.substr(line.find(" "));
+		std::string value = arg.substr(arg.find("(") + 1, arg.find(")") - arg.find("(") - 1);
+
+		ss << YELLOW << line.substr(0, line.find(" "))\
+			<< MAGENTA << arg.substr(0, arg.find("("))\
+			<< EOC << "(" << CYAN << value << EOC << ")";
+	}
+	else
+	{
+		if (line.find(" ") != std::string::npos)
+			ss << YELLOW << line.substr(0, line.find(" ")) << EOC;
+		else
+			ss << YELLOW << line << EOC;
+	}
+	return (ss.str());
+}
+
 void AbstractVM::checkLine(std::string const &line)
 {
 	if (line.find(" ") != std::string::npos)
@@ -174,6 +201,8 @@ void AbstractVM::checkLine(std::string const &line)
 void AbstractVM::Push(std::string const &line)
 {
 	this->parseArg(line);
+	if (_verbose)
+		std::cout << this->printInstruction(line, true) << std::endl;
 }
 
 void AbstractVM::Pop(std::string const &line)
@@ -181,6 +210,12 @@ void AbstractVM::Pop(std::string const &line)
 	this->checkLine(line);
 	if (_operands->empty())
 		throw PopEmptyException();
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, false)\
+			<< " " << MAGENTA << Operand<int>::toStringType(_operands->top()) << EOC\
+			<< "(" << CYAN << _operands->top()->toString() << EOC << ")" << std::endl;
+	}
 	delete _operands->top();
 	_operands->pop();
 }
@@ -188,6 +223,8 @@ void AbstractVM::Pop(std::string const &line)
 void AbstractVM::Dump(std::string const &line)
 {
 	this->checkLine(line);
+	if (_verbose)
+		std::cout << this->printInstruction(line, false) << std::endl;
 	for (Stack<IOperand const*>::reverse_iterator it = _operands->rbegin(); it != _operands->rend(); ++it)
 		std::cout << (*it)->toString() << std::endl;
 }
@@ -201,6 +238,12 @@ void AbstractVM::Assert(std::string const &line)
 		good = false;
 	delete _operands->top();
 	_operands->pop();
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, true)\
+			<< " == " << MAGENTA << Operand<int>::toStringType(_operands->top()) << EOC\
+			<< "(" << CYAN << _operands->top()->toString() << EOC << ")" << std::endl;
+	}
 	if (!good)
 		throw std::runtime_error("Assert not true exception");
 }
@@ -218,6 +261,16 @@ void AbstractVM::Add(std::string const &line)
 	_operands->pop();
 	_operands->pop();
 	_operands->push(result);
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, false)\
+			<< " " << MAGENTA << Operand<int>::toStringType(left) << EOC\
+			<< "(" << CYAN << left->toString() << EOC << ")"\
+			<< " + " << MAGENTA << Operand<int>::toStringType(right) << EOC\
+			<< "(" << CYAN << right->toString() << EOC << ")"\
+			<< " = " << MAGENTA << Operand<int>::toStringType(result) << EOC\
+			<< "(" << CYAN << result->toString() << EOC << ")" << std::endl;
+	}
 	delete left;
 	delete right;
 }
@@ -235,6 +288,16 @@ void AbstractVM::Sub(std::string const &line)
 	_operands->pop();
 	_operands->pop();
 	_operands->push(result);
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, false)\
+			<< " " << MAGENTA << Operand<int>::toStringType(left) << EOC\
+			<< "(" << CYAN << left->toString() << EOC << ")"\
+			<< " - " << MAGENTA << Operand<int>::toStringType(right) << EOC\
+			<< "(" << CYAN << right->toString() << EOC << ")"\
+			<< " = " << MAGENTA << Operand<int>::toStringType(result) << EOC\
+			<< "(" << CYAN << result->toString() << EOC << ")" << std::endl;
+	}
 	delete left;
 	delete right;
 }
@@ -252,6 +315,16 @@ void AbstractVM::Mul(std::string const &line)
 	_operands->pop();
 	_operands->pop();
 	_operands->push(result);
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, false)\
+			<< " " << MAGENTA << Operand<int>::toStringType(left) << EOC\
+			<< "(" << CYAN << left->toString() << EOC << ")"\
+			<< " * " << MAGENTA << Operand<int>::toStringType(right) << EOC\
+			<< "(" << CYAN << right->toString() << EOC << ")"\
+			<< " = " << MAGENTA << Operand<int>::toStringType(result) << EOC\
+			<< "(" << CYAN << result->toString() << EOC << ")" << std::endl;
+	}
 	delete left;
 	delete right;
 }
@@ -269,6 +342,16 @@ void AbstractVM::Div(std::string const &line)
 	_operands->pop();
 	_operands->pop();
 	_operands->push(result);
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, false)\
+			<< " " << MAGENTA << Operand<int>::toStringType(left) << EOC\
+			<< "(" << CYAN << left->toString() << EOC << ")"\
+			<< " / " << MAGENTA << Operand<int>::toStringType(right) << EOC\
+			<< "(" << CYAN << right->toString() << EOC << ")"\
+			<< " = " << MAGENTA << Operand<int>::toStringType(result) << EOC\
+			<< "(" << CYAN << result->toString() << EOC << ")" << std::endl;
+	}
 	delete left;
 	delete right;
 }
@@ -289,6 +372,16 @@ void AbstractVM::Mod(std::string const &line)
 	_operands->pop();
 	_operands->pop();
 	_operands->push(result);
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, false)\
+			<< " " << MAGENTA << Operand<int>::toStringType(left) << EOC\
+			<< "(" << CYAN << left->toString() << EOC << ")"\
+			<< " % " << MAGENTA << Operand<int>::toStringType(right) << EOC\
+			<< "(" << CYAN << right->toString() << EOC << ")"\
+			<< " = " << MAGENTA << Operand<int>::toStringType(result) << EOC\
+			<< "(" << CYAN << result->toString() << EOC << ")" << std::endl;
+	}
 	delete left;
 	delete right;
 }
@@ -300,13 +393,46 @@ void AbstractVM::Print(std::string const &line)
 	if ((*it)->getType() != Int8)
 		throw std::runtime_error("Assert not true exception");
 	std::cout << static_cast<char>(std::stoi((*it)->toString()));
-
+	if (_verbose)
+		std::cout << this->printInstruction(line, false) << std::endl;
 }
 
 void AbstractVM::Exit(std::string const &line)
 {
 	this->checkLine(line);
 	_exit = true;
+	if (_verbose)
+		std::cout << this->printInstruction(line, false) << std::endl;
+}
+
+void AbstractVM::Rev(std::string const &line)
+{
+	std::string next, instruction;
+	IOperand const *left, *right;
+
+	if (_operands->size() < 2)
+		throw std::logic_error("Missing operand(s) exception");
+	right = _operands->top();
+	_operands->pop();
+	left = _operands->top();
+	_operands->pop();
+	_operands->push(right);
+	_operands->push(left);
+	if (_verbose)
+	{
+		std::cout << this->printInstruction(line, false) << std::endl;
+	}
+	if (line.find(" ") != std::string::npos)
+	{
+		next = line.substr(line.find(" ") + 1);
+		instruction = next.substr(0, next.find(" "));
+		if (AbstractVM::_inst.find(instruction) != _inst.end())
+		{
+			(this->*_inst.at(instruction))(next);
+		}
+		else
+			throw UnknowInstructionException();
+	}
 }
 
 void AbstractVM::parseArg(std::string const &line)
@@ -339,30 +465,16 @@ void AbstractVM::parseArg(std::string const &line)
 
 void AbstractVM::checkInteger(std::string const &value)
 {
-	size_t i = 0;
-	if (value[0] == '-' || value[0] == '+')
-		i = 1;
-	for (; i < value.size(); i++)
-		if (!isdigit(value[i]))
-			throw LexicalSyntacticException("Syntactic exception (Value is not an integer)");
+	if (value == "+" || value == "-"
+	|| !std::regex_match(value, std::regex("^[+\\-]?(?:0|[1-9]\\d*)?$")))
+		throw LexicalSyntacticException("Syntactic exception (Value is not an integer)");
 }
 
 void AbstractVM::checkDecimal(std::string const &value)
 {
-	bool dot = false;
-	size_t i = 0;
-
-	if (value[0] == '-' || value[0] == '+')
-		i = 1;
-	if (value == "." || value == "-." || value == "+.")
+	if (value == "+" || value == "-" || value == "+." || value == "-." || value == "."
+	|| !std::regex_match(value, std::regex("^[+\\-]?(?:|0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?$")))
 		throw LexicalSyntacticException("Syntactic exception (Value is not a decimal number)");
-	for (; i < value.size(); i++)
-		if (!isdigit(value[i]))
-		{
-			if (value[i] != '.' || dot)
-				throw LexicalSyntacticException("Syntactic exception (Value is not a decimal number)");
-			dot = true;
-		}
 }
 
 void AbstractVM::parseInt8(std::string const &value)

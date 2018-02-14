@@ -83,4 +83,5 @@ void test_all(void)
 	test_mod(grade);
 	std::cout << "==============================================" << std::endl;
 	std::cout << "Final grade : " << grade << "/200" << std::endl;
+	std::cout << "==============================================" << std::endl;
 }

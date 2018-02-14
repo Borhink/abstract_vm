@@ -19,6 +19,10 @@ Push Float(-.5)
 			Push     	  Float(  	+2.		 )     		 ;;;taerg4v5v2; t
 Mul
 
+Push Double(+.0123456789e+10)
+Push Double(+4242.42e-2)
+rev div
+
 Dump
 
 						;ERROR PART
