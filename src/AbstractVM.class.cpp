@@ -6,18 +6,17 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:28 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/13 18:36:50 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/14 14:16:55 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AbstractVM.class.hpp"
 
-AbstractVM::funcPtr1 const AbstractVM::_create[5] = {&AbstractVM::createInt8, &AbstractVM::createInt16, &AbstractVM::createInt32, &AbstractVM::createFloat, &AbstractVM::createDouble};
 std::map<std::string, AbstractVM::funcPtr2> const AbstractVM::_inst = AbstractVM::initInst();
 std::map<std::string, AbstractVM::funcPtr2> const AbstractVM::_types = AbstractVM::initTypes();
 
 AbstractVM::AbstractVM(void):
-_operands(new Stack<IOperand const*>)
+_operands(new Stack<IOperand const*>), _factory()
 {
 
 }
@@ -87,7 +86,7 @@ void AbstractVM::run(char *path)
 {
 	std::string buff;
 	std::fstream file;
-	int line = 0;
+	int line = 1;
 
 	if (path)
 	{
@@ -213,11 +212,11 @@ void AbstractVM::Add(std::string const &line)
 	this->checkLine(line);
 	if (_operands->size() < 2)
 		throw std::logic_error("Missing operand(s) exception");
-	right = _operands->top();
-	_operands->pop();
-	left = _operands->top();
-	_operands->pop();
+	right = *(_operands->crbegin());
+	left = *(_operands->crbegin() + 1);
 	result = *left + *right;
+	_operands->pop();
+	_operands->pop();
 	_operands->push(result);
 	delete left;
 	delete right;
@@ -230,11 +229,11 @@ void AbstractVM::Sub(std::string const &line)
 	this->checkLine(line);
 	if (_operands->size() < 2)
 		throw std::logic_error("Missing operand(s) exception");
-	right = _operands->top();
-	_operands->pop();
-	left = _operands->top();
-	_operands->pop();
+	right = *(_operands->crbegin());
+	left = *(_operands->crbegin() + 1);
 	result = *left - *right;
+	_operands->pop();
+	_operands->pop();
 	_operands->push(result);
 	delete left;
 	delete right;
@@ -247,11 +246,11 @@ void AbstractVM::Mul(std::string const &line)
 	this->checkLine(line);
 	if (_operands->size() < 2)
 		throw std::logic_error("Missing operand(s) exception");
-	right = _operands->top();
-	_operands->pop();
-	left = _operands->top();
-	_operands->pop();
+	right = *(_operands->crbegin());
+	left = *(_operands->crbegin() + 1);
 	result = *left * *right;
+	_operands->pop();
+	_operands->pop();
 	_operands->push(result);
 	delete left;
 	delete right;
@@ -264,11 +263,11 @@ void AbstractVM::Div(std::string const &line)
 	this->checkLine(line);
 	if (_operands->size() < 2)
 		throw std::logic_error("Missing operand(s) exception");
-	right = _operands->top();
-	_operands->pop();
-	left = _operands->top();
-	_operands->pop();
+	right = *(_operands->crbegin());
+	left = *(_operands->crbegin() + 1);
 	result = *left / *right;
+	_operands->pop();
+	_operands->pop();
 	_operands->push(result);
 	delete left;
 	delete right;
@@ -284,11 +283,11 @@ void AbstractVM::Mod(std::string const &line)
 	if ((*_operands->crbegin())->getType() >= Float
 	|| (*(_operands->crbegin() + 1))->getType() >= Float)
 		throw std::runtime_error("Invalid operands to binary expression exception");
-	right = _operands->top();
-	_operands->pop();
-	left = _operands->top();
-	_operands->pop();
+	right = *(_operands->crbegin());
+	left = *(_operands->crbegin() + 1);
 	result = *left % *right;
+	_operands->pop();
+	_operands->pop();
 	_operands->push(result);
 	delete left;
 	delete right;
@@ -369,64 +368,29 @@ void AbstractVM::checkDecimal(std::string const &value)
 void AbstractVM::parseInt8(std::string const &value)
 {
 	this->checkInteger(value);
-	this->createOperand(Int8, value);
+	_operands->push(_factory.createOperand(Int8, value));
 }
 
 void AbstractVM::parseInt16(std::string const &value)
 {
 	this->checkInteger(value);
-	this->createOperand(Int16, value);
+	_operands->push(_factory.createOperand(Int16, value));
 }
 
 void AbstractVM::parseInt32(std::string const &value)
 {
 	this->checkInteger(value);
-	this->createOperand(Int32, value);
+	_operands->push(_factory.createOperand(Int32, value));
 }
 
 void AbstractVM::parseFloat(std::string const &value)
 {
 	this->checkDecimal(value);
-	this->createOperand(Float, value);
+	_operands->push(_factory.createOperand(Float, value));
 }
 
 void AbstractVM::parseDouble(std::string const &value)
 {
 	this->checkDecimal(value);
-	this->createOperand(Double, value);
-}
-
-IOperand const *AbstractVM::createOperand(eOperandType type, std::string const &value) const
-{
-	return ((this->*_create[type])(value));
-}
-
-IOperand const *AbstractVM::createInt8(std::string const &value) const
-{
-	_operands->push(new Operand<char>(value, Int8));
-	return (_operands->top());
-}
-
-IOperand const *AbstractVM::createInt16(std::string const &value) const
-{
-	_operands->push(new Operand<short>(value, Int16));
-	return (_operands->top());
-}
-
-IOperand const *AbstractVM::createInt32(std::string const &value) const
-{
-	_operands->push(new Operand<int>(value, Int32));
-	return (_operands->top());
-}
-
-IOperand const *AbstractVM::createFloat(std::string const &value) const
-{
-	_operands->push(new Operand<float>(value, Float));
-	return (_operands->top());
-}
-
-IOperand const *AbstractVM::createDouble(std::string const &value) const
-{
-	_operands->push(new Operand<double>(value, Double));
-	return (_operands->top());
+	_operands->push(_factory.createOperand(Double, value));
 }

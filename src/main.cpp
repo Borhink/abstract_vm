@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:56:50 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/13 17:43:26 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/14 14:19:55 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int main(int ac, char **av)
 			else
 			{
 				if (!first)
-					std::cout << "==================================" << std::endl;
+					std::cout << std::endl << "==================================" << std::endl;
 				vm.run(av[i]);
 				first = false;
 			}
@@ -39,20 +39,3 @@ int main(int ac, char **av)
 		vm.run(nullptr);
 	return (0);
 }
-
-/*
-• An instruction is unknown 	 														OK
-• Overflow on a value or the result of an operation 	 								OK
-• Underflow on a value or the result of an operation 	 								OK
-• Division/modulo by 0 																	OK
-• The assembly program includes one or several lexical errors or syntactic errors.		OK
-• Instruction pop on an empty stack														OK
-• An assert instruction is not true														OK
-• The stack is composed of strictly less that two values when an arithmetic instruction
-is executed.																			OK
-• If modulo between a float or double -> Error "invalid operands to binary expression"	OK
-• The program doesn’t have an exit instruction											OK
-
-MY TESTS
-this->createOperand(Int8, "127.00000001");	OK
-*/

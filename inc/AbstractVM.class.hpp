@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:23 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/13 17:48:20 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/14 14:16:07 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include "IOperand.class.hpp"
 # include "Operand.class.hpp"
 # include "Exceptions.class.hpp"
+# include "Factory.class.hpp"
 
 #define GREEN "\033[32m"
 #define RED "\033[31m"
@@ -39,7 +40,6 @@ class AbstractVM
 
 public:
 
-	typedef IOperand const *(AbstractVM::*funcPtr1)(std::string const &) const;
 	typedef void (AbstractVM::*funcPtr2)(std::string const &);
 
 	AbstractVM(void);
@@ -51,17 +51,11 @@ public:
 
 	AbstractVM &operator=(AbstractVM const &rhs);
 
-	void clearStack(void);
 	void run(char *path);
 
-	IOperand const *createOperand(eOperandType type, std::string const &value) const;
-	IOperand const *createInt8(std::string const &value) const;
-	IOperand const *createInt16(std::string const &value) const;
-	IOperand const *createInt32(std::string const &value) const;
-	IOperand const *createFloat(std::string const &value) const;
-	IOperand const *createDouble(std::string const &value) const;
-
 private:
+
+	void clearStack(void);
 	void purifyString(std::string &str) const;
 
 	void parseInstruction(std::string line);
@@ -91,8 +85,8 @@ private:
 	bool _exit;
 	bool _isFile;
 	Stack<IOperand const*> *_operands;
+	Factory _factory;
 
-	static funcPtr1 const _create[5];
 	static std::map<std::string, AbstractVM::funcPtr2> const _inst;
 	static std::map<std::string, AbstractVM::funcPtr2> const _types;
 };
