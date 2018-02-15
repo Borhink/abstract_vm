@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 10:58:23 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/14 18:53:58 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/15 13:22:32 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,10 @@ private:
 	void clearStack(void);
 	void purifyString(std::string &str) const;
 	std::string printInstruction(std::string const &line, bool args);
+	void printOperation(std::string const &line, IOperand const *left,\
+		IOperand const *right, IOperand const *result, std::string const &op);
+	void printFunction(std::string const &line, IOperand const *left,\
+		IOperand const *right, IOperand const *result, std::string const &op);
 
 	void parseInstruction(std::string line);
 	void checkLine(std::string const &line);
@@ -73,6 +77,12 @@ private:
 	void Print(std::string const &line);
 	void Exit(std::string const &line);
 	void Rev(std::string const &line);
+	void And(std::string const &line);
+	void Or(std::string const &line);
+	void Xor(std::string const &line);
+	void Min(std::string const &line);
+	void Max(std::string const &line);
+	void Avg(std::string const &line);
 
 	void parseArg(std::string const &line);
 	void checkInteger(std::string const &value);

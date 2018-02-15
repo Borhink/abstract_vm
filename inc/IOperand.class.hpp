@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 12:05:34 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/03 17:57:05 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/15 13:18:33 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,14 @@ public:
 	virtual IOperand const *operator*(IOperand const &rhs) const = 0; // Product
 	virtual IOperand const *operator/(IOperand const &rhs) const = 0; // Quotient
 	virtual IOperand const *operator%(IOperand const &rhs) const = 0; // Modulo
+
+	//BONUS
+	virtual IOperand const *operator&(IOperand const &rhs) const = 0; // And
+	virtual IOperand const *operator|(IOperand const &rhs) const = 0; // Or
+	virtual IOperand const *operator^(IOperand const &rhs) const = 0; // Xor
+	virtual IOperand const *min(IOperand const &rhs) const = 0; // Min
+	virtual IOperand const *max(IOperand const &rhs) const = 0; // Max
+	virtual IOperand const *avg(IOperand const &rhs) const = 0; // Average
 
 	virtual std::string const &toString(void) const = 0; // String representation of the instance
 

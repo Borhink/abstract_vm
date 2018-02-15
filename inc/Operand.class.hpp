@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 12:05:34 by qhonore           #+#    #+#             */
-/*   Updated: 2018/02/14 17:11:05 by qhonore          ###   ########.fr       */
+/*   Updated: 2018/02/15 14:37:29 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ public:
 		{
 			_nb = rhs._nb;
 			_type = rhs._type;
+			_str = rhs._str;
 		}
 		return (*this);
 	}
@@ -184,6 +185,60 @@ public:
 		if (opR == 0)
 			throw FloatingPointException();
 		return (this->createOperand(type, opL % opR));
+	}
+
+	virtual IOperand const *operator&(IOperand const &rhs) const
+	{
+		eOperandType type = (this->getType() > rhs.getType() ? this->getType() : rhs.getType());
+		int opL = Operand::convert<int>(*this);
+		int opR = Operand::convert<int>(rhs);
+
+		return (this->createOperand(type, opL & opR));
+	}
+
+	virtual IOperand const *operator|(IOperand const &rhs) const
+	{
+		eOperandType type = (this->getType() > rhs.getType() ? this->getType() : rhs.getType());
+		int opL = Operand::convert<int>(*this);
+		int opR = Operand::convert<int>(rhs);
+
+		return (this->createOperand(type, opL | opR));
+	}
+
+	virtual IOperand const *operator^(IOperand const &rhs) const
+	{
+		eOperandType type = (this->getType() > rhs.getType() ? this->getType() : rhs.getType());
+		int opL = Operand::convert<int>(*this);
+		int opR = Operand::convert<int>(rhs);
+
+		return (this->createOperand(type, opL ^ opR));
+	}
+
+	virtual IOperand const *min(IOperand const &rhs) const
+	{
+		eOperandType type = (this->getType() > rhs.getType() ? this->getType() : rhs.getType());
+		double opL = Operand::convert<double>(*this);
+		double opR = Operand::convert<double>(rhs);
+
+		return (this->createOperand(type, opL < opR ? opL : opR));
+	}
+
+	virtual IOperand const *max(IOperand const &rhs) const
+	{
+		eOperandType type = (this->getType() > rhs.getType() ? this->getType() : rhs.getType());
+		double opL = Operand::convert<double>(*this);
+		double opR = Operand::convert<double>(rhs);
+
+		return (this->createOperand(type, opL > opR ? opL : opR));
+	}
+
+	virtual IOperand const *avg(IOperand const &rhs) const
+	{
+		eOperandType type = (this->getType() > rhs.getType() ? this->getType() : rhs.getType());
+		double opL = Operand::convert<double>(*this);
+		double opR = Operand::convert<double>(rhs);
+
+		return (this->createOperand(type, (opL / 2) + (opR / 2)));
 	}
 
 /******************************************************************************\
